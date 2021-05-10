@@ -14,7 +14,12 @@ defmodule Pollution.Application do
       # Start the Endpoint (http/https)
       PollutionWeb.Endpoint,
       # Start the Absinthe subscriptions supervisor
-      {Absinthe.Subscription, PollutionWeb.Endpoint}
+      {Absinthe.Subscription, PollutionWeb.Endpoint},
+      # Start the pollution GenServer
+      %{
+        id: Pollution.Server,
+        start: {Pollution.Server, :start_link, []}
+      }
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
