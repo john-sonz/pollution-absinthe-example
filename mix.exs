@@ -33,11 +33,14 @@ defmodule Pollution.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:absinthe, "~> 1.6"},
+      {:absinthe_plug, "~> 1.5"},
+      {:absinthe_phoenix, "~> 2.0.0"},
+      {:jason, "~> 1.1"},
       {:phoenix, "~> 1.5.8"},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
-      {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"}
     ]
   end

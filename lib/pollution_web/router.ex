@@ -1,12 +1,19 @@
 defmodule PollutionWeb.Router do
   use PollutionWeb, :router
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  pipeline :graphql do
+    plug :accepts, ["json", "graphql"]
   end
 
-  scope "/api", PollutionWeb do
-    pipe_through :api
+  scope "/api" do
+    pipe_through :graphql
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: PollutionWeb.Schema,
+      socket: PollutionWeb.UserSocket,
+      interface: :playground
+
+    forward "/", Absinthe.Plug
   end
 
   # Enables LiveDashboard only for development

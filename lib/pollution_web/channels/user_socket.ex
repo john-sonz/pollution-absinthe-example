@@ -1,6 +1,9 @@
 defmodule PollutionWeb.UserSocket do
   use Phoenix.Socket
 
+  use Absinthe.Phoenix.Socket,
+    schema: PollutionWeb.Schema
+
   ## Channels
   # channel "room:*", PollutionWeb.RoomChannel
 

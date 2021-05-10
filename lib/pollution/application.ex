@@ -12,9 +12,9 @@ defmodule Pollution.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Pollution.PubSub},
       # Start the Endpoint (http/https)
-      PollutionWeb.Endpoint
-      # Start a worker by calling: Pollution.Worker.start_link(arg)
-      # {Pollution.Worker, arg}
+      PollutionWeb.Endpoint,
+      # Start the Absinthe subscriptions supervisor
+      {Absinthe.Subscription, PollutionWeb.Endpoint}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
