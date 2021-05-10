@@ -104,7 +104,7 @@ defmodule Pollution.Server.DataMonitor do
 
   @spec get_measurements(t(), station_id()) ::
           {:ok, {measurements(), station_coords()}} | {:error, atom()}
-  defp get_measurements(%__MODULE__{} = monitor, {_lat, _lng} = coords) do
+  def get_measurements(%__MODULE__{} = monitor, {_lat, _lng} = coords) do
     if station_exists?(monitor, coords) do
       {:ok, {monitor.measurements[coords], coords}}
     else
@@ -112,7 +112,7 @@ defmodule Pollution.Server.DataMonitor do
     end
   end
 
-  defp get_measurements(%__MODULE__{} = monitor, name) when is_binary(name) do
+  def get_measurements(%__MODULE__{} = monitor, name) when is_binary(name) do
     if station_exists?(monitor, name) do
       coords = monitor.coords[name]
       {:ok, {monitor.measurements[coords], coords}}

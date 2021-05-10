@@ -56,6 +56,17 @@ defmodule Pollution.Server do
     GenServer.call(server(), {:get_area_mean, station_id, radius, target_type})
   end
 
+  @spec list_stations() :: list()
+  def list_stations() do
+    GenServer.call(server(), :list_stations)
+  end
+
+  @spec list_station_measurements(DataMonitor.station_id()) ::
+          {:ok, [map()]} | {:error, atom()}
+  def list_station_measurements(station_id) do
+    GenServer.call(server(), {:list_station_measurements, station_id})
+  end
+
   @impl true
   def handle_call({:add_station, name, coords}, _from, state) do
     {reply, new_state} =
@@ -100,7 +111,27 @@ defmodule Pollution.Server do
     {:reply, DataMonitor.get_area_mean(state, station_id, radius, target_type), state}
   end
 
-  def handle_state_update(updated_state, prev_state) do
+  def handle_call(:list_stations, _from, state) do
+    stations =
+      state.coords
+      |> Enum.map(fn {name, coords} -> %{name: name, coords: coords} end)
+
+    {:reply, stations, state}
+  end
+
+  def handle_call({:list_station_measurements, station_id}, _from, state) do
+    reply =
+      with {:ok, {ms, _}} <- DataMonitor.get_measurements(state, station_id) do
+        measurements =
+          Enum.map(ms, fn {{dt, type}, val} -> %{datetime: dt, type: type, value: val} end)
+
+        {:ok, measurements}
+      end
+
+    {:reply, reply, state}
+  end
+
+  defp handle_state_update(updated_state, prev_state) do
     case updated_state do
       {:ok, state} -> {:ok, state}
       {:error, reason} -> {{:error, reason}, prev_state}
