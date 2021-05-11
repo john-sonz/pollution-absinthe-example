@@ -67,6 +67,11 @@ defmodule Pollution.Server do
     GenServer.call(server(), {:list_station_measurements, station_id})
   end
 
+  @spec get_station(DataMonitor.station_id()) :: {:ok, map()} | {:error, atom()}
+  def get_station(station_id) do
+    GenServer.call(server(), {:get_station, station_id})
+  end
+
   @impl true
   def handle_call({:add_station, name, coords}, _from, state) do
     {reply, new_state} =
@@ -126,6 +131,33 @@ defmodule Pollution.Server do
           Enum.map(ms, fn {{dt, type}, val} -> %{datetime: dt, type: type, value: val} end)
 
         {:ok, measurements}
+      end
+
+    {:reply, reply, state}
+  end
+
+  def handle_call({:get_station, {_lat, _lng} = coords}, _from, state) do
+    reply =
+      if Map.has_key?(state.measurements, coords) do
+        state.coords
+        |> Enum.find_value({:error, :station_not_found}, fn {name, c} ->
+          if c == coords,
+            do: {:ok, %{name: name, coords: coords}},
+            else: false
+        end)
+      else
+        {:error, :station_not_found}
+      end
+
+    {:reply, reply, state}
+  end
+
+  def handle_call({:get_station, name}, _from, state) do
+    reply =
+      if Map.has_key?(state.coords, name) do
+        {:ok, %{name: name, coords: state.coords[name]}}
+      else
+        {:error, :station_not_found}
       end
 
     {:reply, reply, state}
