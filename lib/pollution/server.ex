@@ -1,14 +1,16 @@
 defmodule Pollution.Server do
   use GenServer
 
-  alias Pollution.Server.DataMonitor
+  alias Pollution.Server.{DataMonitor, Seeds}
 
   defp server() do
     :pollution_server
   end
 
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: server())
+    result = GenServer.start_link(__MODULE__, [], name: server())
+    spawn(&Seeds.seed_server/0)
+    result
   end
 
   @impl true
