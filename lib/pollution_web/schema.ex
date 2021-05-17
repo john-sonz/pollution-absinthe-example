@@ -90,9 +90,6 @@ defmodule PollutionWeb.Schema do
     end
   end
 
-  def station_name_topic(name), do: "station:#{name}"
-  def station_coords_topic(coords), do: "station:(#{coords.latitude}:#{coords.longitude})"
-
   subscription do
     field :station_added, non_null(:station) do
       config(fn _args, _ctx ->
@@ -121,4 +118,7 @@ defmodule PollutionWeb.Schema do
       )
     end
   end
+
+  def station_name_topic(name), do: "station:#{name}"
+  def station_coords_topic(coords), do: "station:(#{coords.latitude}:#{coords.longitude})"
 end
